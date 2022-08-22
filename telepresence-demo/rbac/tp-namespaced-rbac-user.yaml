@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tp-user # Update value for appropriate user name
+  namespace: ambassador # Traffic-Manager is deployed to Ambassador namespace
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: telepresence-role
+rules:
+  - apiGroups:
+      - ""
+    resources: ["pods"]
+    verbs: ["get", "list", "create", "watch", "delete"]
+  - apiGroups:
+      - ""
+    resources: ["services"]
+    verbs: ["update"]
+  - apiGroups:
+      - ""
+    resources: ["pods/portforward"]
+    verbs: ["create"]
+  - apiGroups:
+      - "apps"
+    resources: ["deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "update", "watch"]
+  - apiGroups:
+      - "getambassador.io"
+    resources: ["hosts", "mappings"]
+    verbs: ["*"]
+  - apiGroups:
+      - ""
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch"]
+---
+kind: RoleBinding # RBAC to access ambassador namespace
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: t2-ambassador-binding
+  namespace: ambassador
+subjects:
+  - kind: ServiceAccount
+    name: tp-user # Should be the same as metadata.name of above ServiceAccount
+    namespace: ambassador
+roleRef:
+  kind: ClusterRole
+  name: telepresence-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: RoleBinding # RoleBinding T2 namespace to be intecpeted
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: telepresence-test-binding # Update "test" for appropriate namespace to be intercepted
+  namespace: test # Update "test" for appropriate namespace to be intercepted
+subjects:
+  - kind: ServiceAccount
+    name: tp-user # Should be the same as metadata.name of above ServiceAccount
+    namespace: ambassador
+roleRef:
+  kind: ClusterRole
+  name: telepresence-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: telepresence-namespace-role
+rules:
+  - apiGroups:
+      - ""
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups:
+      - ""
+    resources: ["services"]
+    verbs: ["get", "list", "watch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: telepresence-namespace-binding
+subjects:
+  - kind: ServiceAccount
+    name: tp-user # Should be the same as metadata.name of above ServiceAccount
+    namespace: ambassador
+roleRef:
+  kind: ClusterRole
+  name: telepresence-namespace-role
+  apiGroup: rbac.authorization.k8s.io

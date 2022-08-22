@@ -1,3 +1,6 @@
 go 1.19
 
-use ./goreleaser-demo
+use (
+	./goreleaser-demo
+	./telepresence-demo
+)

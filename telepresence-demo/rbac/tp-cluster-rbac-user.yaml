@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tp-user # Update value for appropriate value
+  namespace: ambassador # Traffic-Manager is deployed to Ambassador namespace
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: telepresence-role
+rules:
+  - apiGroups:
+      - ""
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "create", "delete"]
+  - apiGroups:
+      - ""
+    resources: ["services"]
+    verbs: ["get", "list", "update", "watch"]
+  - apiGroups:
+      - ""
+    resources: ["pods/portforward"]
+    verbs: ["create"]
+  - apiGroups:
+      - "apps"
+    resources: ["deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "update", "patch", "watch"]
+  - apiGroups:
+      - "getambassador.io"
+    resources: ["hosts", "mappings"]
+    verbs: ["*"]
+  - apiGroups:
+      - ""
+    resources: ["endpoints"]
+    verbs: ["get", "list"]
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources: ["clusterroles", "clusterrolebindings"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups:
+      - ""
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: telepresence-rolebinding
+subjects:
+  - name: tp-user
+    kind: ServiceAccount
+    namespace: ambassador
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  name: telepresence-role
+  kind: ClusterRole
