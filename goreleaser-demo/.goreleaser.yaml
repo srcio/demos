@@ -1,0 +1,119 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: main.go
+    binary: goreleaser-demo
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      amd64: x86_64
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+dockers:
+  # You can have multiple Docker images.
+  - # GOOS of the built binaries/packages that should be used.
+    goos: linux
+
+    # GOARCH of the built binaries/packages that should be used.
+    goarch: amd64
+
+    # Templates of the Docker image names.
+    image_templates:
+      - "srcio/goreleaser-demo:v{{ .Major }}-amd64"
+
+    # Skips the docker push.
+    # Could be useful if you also do draft releases.
+    #
+    # If set to auto, the release will not be pushed to the Docker repository
+    #  in case there is an indicator of a prerelease in the tag, e.g. v1.0.0-rc1.
+    #
+    # Defaults to false.
+    skip_push: "false"
+
+    # Path to the Dockerfile (from the project root).
+    #
+    # Defaults to `Dockerfile`.
+    dockerfile: Dockerfile
+
+    # Set the "backend" for the Docker pipe.
+    # Valid options are: docker, buildx, podman.
+    # podman is a GoReleaser Pro feature and is only available on Linux.
+    # Defaults to docker.
+    use: buildx
+
+    # Template of the docker build flags.
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/amd64"
+  - # GOOS of the built binaries/packages that should be used.
+    goos: linux
+
+    # GOARCH of the built binaries/packages that should be used.
+    goarch: arm64
+
+    # Templates of the Docker image names.
+    image_templates:
+      - "srcio/goreleaser-demo:v{{ .Major }}-arm64"
+
+    # Skips the docker push.
+    # Could be useful if you also do draft releases.
+    #
+    # If set to auto, the release will not be pushed to the Docker repository
+    #  in case there is an indicator of a prerelease in the tag, e.g. v1.0.0-rc1.
+    #
+    # Defaults to false.
+    skip_push: "false"
+
+    # Path to the Dockerfile (from the project root).
+    #
+    # Defaults to `Dockerfile`.
+    dockerfile: Dockerfile
+
+    # Set the "backend" for the Docker pipe.
+    # Valid options are: docker, buildx, podman.
+    # podman is a GoReleaser Pro feature and is only available on Linux.
+    # Defaults to docker.
+    use: buildx
+
+    # Template of the docker build flags.
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+      - "--platform=linux/arm64"
+docker_manifests:
+  - name_template: "srcio/goreleaser-demo:v{{ .Major }}"
+    image_templates:
+      - "srcio/goreleaser-demo:v{{ .Major }}-amd64"
+      - "srcio/goreleaser-demo:v{{ .Major }}-arm64"
