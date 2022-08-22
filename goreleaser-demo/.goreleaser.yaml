@@ -45,8 +45,8 @@ dockers:
     # Templates of the Docker image names.
     image_templates:
       - "srcio/goreleaser-demo:v{{ .Major }}-amd64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-amd64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-{{ .Patch }}-amd64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.amd64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
       - "srcio/goreleaser-demo:latest-amd64"
 
     # Skips the docker push.
@@ -86,8 +86,8 @@ dockers:
     # Templates of the Docker image names.
     image_templates:
       - "srcio/goreleaser-demo:v{{ .Major }}-arm64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-arm64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-{{ .Patch }}-arm64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}-arm64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
       - "srcio/goreleaser-demo:latest-arm64"
 
     # Skips the docker push.
@@ -123,14 +123,14 @@ docker_manifests:
     image_templates:
       - "srcio/goreleaser-demo:v{{ .Major }}-amd64"
       - "srcio/goreleaser-demo:v{{ .Major }}-arm64"
-  - name_template: "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}"
+  - name_template: "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}"
     image_templates:
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-amd64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-arm64"
-  - name_template: "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-{{ .Patch }}"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}-amd64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}-arm64"
+  - name_template: "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}"
     image_templates:
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-{{ .Patch }}-amd64"
-      - "srcio/goreleaser-demo:v{{ .Major }}-{{ .Minor }}-{{ .Patch }}-arm64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-amd64"
+      - "srcio/goreleaser-demo:v{{ .Major }}.{{ .Minor }}.{{ .Patch }}-arm64"
   - name_template: "srcio/goreleaser-demo:latest"
     image_templates:
       - "srcio/goreleaser-demo:latest-amd64"
